@@ -17,7 +17,7 @@ class Unit {
   }
 
   attack(target, logs) {
-    const damage = Math.floor(Math.random() * this.minDamage + this.maxDamage);
+    const damage = Math.floor(Math.random() * this.minDamage + (this.maxDamage - this.minDamage));
     const attackMessage = `[${logs.length}] ${this.name}이 ${target.name}에게 ${damage}만큼 피해를 입혔습니다.`;
     target.hp -= damage;
     target.unitType !== 'user'
@@ -29,7 +29,7 @@ class Unit {
 
 class Player extends Unit {
   constructor() {
-    super('Violeto', 100, 10, 10, 'user', 80);
+    super('Violeto', 100, 10, 20, 'user', 80);
     this.escapeChanceRatio = 20;
   }
 
@@ -88,7 +88,7 @@ class Player extends Unit {
 
 class Monster extends Unit {
   constructor() {
-    super('Goblin', 50, 5, 10, 'enemy', 90);
+    super('Goblin', 50, 5, 15, 'enemy', 90);
   }
 
   async action(player, monster, logs) {
@@ -119,16 +119,16 @@ class Stage {
     turn.forEach((turn, i) => {
       turnMessage += `| ${i + 1} 순위 : ${turn.name} `;
     });
-    console.log(chalk.magentaBright(`\n=== Current Status ===`));
+    console.log(chalk.magentaBright(`\n=== Current Status ===\n`));
     console.log(
-      chalk.cyanBright(`| Stage: ${this.currentStage} `) +
+      chalk.cyanBright(`| Stage: ${this.currentStage} |\n\n`) +
         chalk.blueBright(
-          `| Player HP: ${player.hp} Attak: ${player.minDamage}~${player.minDamage + player.maxDamage} | `,
+          `| Player HP: ${player.hp} Attak: ${player.minDamage}~${player.maxDamage} Evasion : |\n\n`,
         ) +
         chalk.redBright(
-          `| Monster HP: ${monster.hp} Attak: ${monster.minDamage}~${monster.minDamage + player.maxDamage} \n`,
+          `| Monster HP: ${monster.hp} Attak: ${monster.minDamage}~${monster.maxDamage} Evasion : |\n`,
         ) +
-        chalk.yellow(`\n${turnMessage}`),
+        chalk.yellow(`\n${turnMessage}\n`),
     );
     console.log(chalk.magentaBright(`=====================\n`));
   }
@@ -136,10 +136,10 @@ class Stage {
   async startStage(player, monster) {
     console.clear();
     this.battleLogs=[];
-    console.log(chalk.magentaBright(`=== Stage ${this.currentStage} ===`));
-    console.log(chalk.inverse(`\n${monster.name}을 조우했다!`));
     while (player.hp > 0 || monster.hp > 0) {
       console.clear();
+      console.log(chalk.magentaBright(`=== Stage ${this.currentStage} ===`));
+      console.log(chalk.inverse(`\n${monster.name}을 조우했다!`));
       const turnOrder = Battle.checkTurn(player, monster);
       this.displayStageInfo(player, monster, turnOrder);
       await Battle.displyBattleLogs(this.battleLogs);

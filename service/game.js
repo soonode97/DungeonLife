@@ -1,10 +1,11 @@
 import { Player, Monster} from './unit.js';
 import { Stage } from './Stage.js';
+import { gameClearMessage } from './logs.js';
 
 export async function startGame() {
   console.clear();
   const player = new Player();
-  const stage = new Stage(10);
+  const stage = new Stage(3);
 
   while (stage.currentStage <= stage.totalStage) {
     console.clear();
@@ -17,5 +18,9 @@ export async function startGame() {
     } else if (result === true) {
       stage.currentStage++;
     }
+  }
+  if(stage.currentStage >= stage.totalStage) {
+    console.clear();
+    gameClearMessage();
   }
 }

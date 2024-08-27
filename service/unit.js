@@ -72,8 +72,8 @@ export class Player extends Unit {
       {
         name: '우아한 베기',
         type: 'attack',
-        minDamage: 10,
-        maxDamage: 20,
+        minDamage: 100,
+        maxDamage: 200,
         cooltime: 0,
         currentCooltime: 0,
       },

@@ -5,7 +5,6 @@ import {
   displayStageInfo,
   monsterDiedMessage,
   nextStageMessage,
-  gameClearMessage,
   gameOverMessage,
 } from './logs.js';
 import { start } from '../server.js';
@@ -72,7 +71,6 @@ export class Stage {
 
     // 게임 종료 - 스테이지 클리어 시퀀스
     if (this.currentStage >= 10) {
-      gameClearMessage();
       return false;
     }
   }

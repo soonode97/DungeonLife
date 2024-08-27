@@ -1,21 +1,20 @@
-import readlineSync from 'readline-sync';
-import chalk from 'chalk';
 import { Battle } from './Battle.js';
 import {
   clearHealMessage,
   displyBattleLogs,
   displayStageInfo,
-  nextStageMessage_clear,
-  nextStageMessage_run,
+  monsterDiedMessage,
+  nextStageMessage,
   gameClearMessage,
   gameOverMessage,
 } from './logs.js';
 import { start } from '../server.js';
+import { Unit, Monster } from './unit.js';
 
 // 스테이지에 관련된 속성과 메서드가 있는 클래스
 export class Stage {
-  constructor(player, stageLength) {
-    this.player = player;
+  constructor(stageLength) {
+    // this.player = player;
     this.totalStage = stageLength;
     this.currentStage = 1;
     this.battleLogs = [];
@@ -24,12 +23,18 @@ export class Stage {
   async startStage(player, monster) {
     console.clear();
     this.battleLogs = [];
+    // 스테이지 시작 전 스탯 증가
+    Unit.stageDamageBuff(player, this.currentStage);
+    Unit.stageDamageBuff(monster, this.currentStage);
+    monster.stageHpBuff(this.currentStage);
+
     while (player.hp > 0 || monster.hp > 0) {
-      const turnOrder = await Battle.checkTurn(player, monster);
+      const turnOrder = Battle.checkTurn(player, monster);
       displayStageInfo(player, monster, this.currentStage, turnOrder);
       displyBattleLogs(this.battleLogs);
-
       const battleEnd = await Battle.battleStart(player, monster, turnOrder, this.battleLogs);
+      await Battle.afterBattleEnd(player, monster, this.battleLogs);
+
       if (battleEnd) {
         break;
       }
@@ -40,16 +45,19 @@ export class Stage {
   async checkStage(player, monster) {
     // 스테이지 종료 - 몬스터 사망
     if (monster.hp <= 0) {
-      nextStageMessage_clear(monster.name, this.battleLogs);
+      monsterDiedMessage(monster.name, this.battleLogs);
       const heal = player.stageClearHeal(this.currentStage, 0, this.battleLogs);
       clearHealMessage(player.name, heal);
+      nextStageMessage();
       this.logs = [];
-      return true;
+      return new Promise(resolve => {
+        resolve(true);
+      });
     }
 
     // 스테이지 종료 - 플레이어 도주
     if (player.isRun === true) {
-      nextStageMessage_run();
+      nextStageMessage();
       this.logs = [];
       player.isRun = false;
       return true;

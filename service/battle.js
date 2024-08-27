@@ -1,4 +1,5 @@
 import { delay } from './utils.js';
+import { nextTurn } from './logs.js';
 
 // 배틀에 관련된 메서드들을 정리한 클래스
 export class Battle {
@@ -9,11 +10,14 @@ export class Battle {
     for (let i = 0; i < turnOrder.length; i++) {
     //   await logs.push(monster);
       await turnOrder[i].action(player, monster, logs);
-      await delay;
+      delay(2000);
 
       const isBattleEnd = await Battle.endCheck(player, monster);
+
       if (isBattleEnd === true) {
-        return true;
+        return new Promise((resolve) => {
+          resolve(true);
+        });
       }
     }
   }
@@ -22,12 +26,14 @@ export class Battle {
   // 이 안에서 배틀이 종료될 때마다 각종 상황을 체크해준다.
   static async endCheck(player, monster) {
     // 몬스터 혹은 유저의 체력이 0인지 확인하는 구역입니다
-    if (player.hp <= 0 || monster.hp <= 0) {
-      return true;
-    } else if (player.isRun === true) {
-      return true;
-    }
-    return false;
+    return new Promise(resolve => {
+      if (player.hp <= 0 || monster.hp <= 0) {
+        resolve(true);
+      } else if (player.isRun === true) {
+        resolve(true);
+      }
+      resolve(false);
+    })
   }
 
   //배틀 턴을 확인하고 관리하는 정적메서드
@@ -38,6 +44,8 @@ export class Battle {
     return turn;
   }
 
+
+// 행동 가능한 액션을 확인하는 메서드
   static async checkPossibleAction(target) {
     const possibleAction = await target.actionTypes.filter((action) => {
       if (action.currentCooltime <= 0) {
@@ -45,5 +53,27 @@ export class Battle {
       }
     });
     return possibleAction;
+  }
+
+
+  // 배틀이 종료된 이후 초기화 및 쿨타임 관련을 처리하는 메서드
+  static async afterBattleEnd(player, monster, logs) {
+    //player 관련 초기화
+    player.isCritical = false;
+    player.isEvasion = false;
+    if(player.actionTypes[1].currentCooltime > 0) {
+      player.actionTypes[1].currentCooltime--;
+    }
+
+    //monster 관련 초기화
+    monster.isCritical = false;
+    monster.isEvasion = false;
+    if(monster.actionTypes[1].currentCooltime > 0) {
+      monster.actionTypes[1].currentCooltime--;
+    }
+
+    return new Promise((resolve) => {
+      resolve(nextTurn(logs));
+    })
   }
 }

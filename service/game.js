@@ -4,11 +4,11 @@ import { Stage } from './Stage.js';
 export async function startGame() {
   console.clear();
   const player = new Player();
-  const stage = new Stage(player, 10);
+  const stage = new Stage(10);
 
   while (stage.currentStage <= stage.totalStage) {
     console.clear();
-    const monster = Monster.createMonster();
+    const monster = Monster.createMonster(stage);
     await stage.startStage(player, monster);
     const result = await stage.checkStage(player, monster);
 

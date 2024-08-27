@@ -11,7 +11,7 @@ DungeonLife는 비올레토라는 주인공이 던전에서 다양한 적들을 
 
 적을 조우하고 선택지를 골라서 적과 전투를 한 뒤 스테이지를 진행 및 종료하며 나아갑니다.
 
-<img src="https://github.com/user-attachments/assets/f2dcbf5d-2609-49df-8d8d-654ddbd0fecc"/>
+<img src="https://github.com/user-attachments/assets/f2dcbf5d-2609-49df-8d8d-654ddbd0fecc" style="width:500px"/>
 
 ---
 
@@ -21,7 +21,7 @@ DungeonLife는 비올레토라는 주인공이 던전에서 다양한 적들을 
 
 버프와 디버프를 주고 싶었지만 시간이 부족할 것 같아 넣지 못했습니다.
 
-<img src="https://github.com/user-attachments/assets/f58bb0a6-31d2-4426-b566-173ecc65c806"/>
+<img src="https://github.com/user-attachments/assets/f58bb0a6-31d2-4426-b566-173ecc65c806" style="width:500px"/>
 
 작동 방식은 
 
@@ -52,8 +52,61 @@ Goblin, Orc, Wolf, Dragon 이 있으며 Dragon은 죽음의 수준입니다.
 
 <img src="https://github.com/user-attachments/assets/e408eefa-b55c-4ada-a68b-6adeb907167c"/>
 
+### 3. 스피드에 기반한 턴제 방식
+
+플레이어와 적의 스피드를 확인하여 이번 턴의 행동 순서를 잡게 됩니다.
+
+턴 순서를 스테이지 현황에 같이 노출시켜줬습니다.
+
+<img src="https://github.com/user-attachments/assets/d8edffe5-1115-448c-a0ee-83a950c13db2"/>
+
 ---
 
 ## 기본 기능
 
-### 1. 
+### 1. 공격하기
+
+플레이어 혹은 몬스터가 공격하는 로직과 피격하는 기능을 구현했습니다.
+
+공격을 하게되면 객체의 actionTypes에 minDamage 와 maxDamage 를 Random으로 산출하여 피해를 주게됩니다.
+
+### 2. 도망치기
+
+도망치기는 플레이어만 가능하며 도망칠 수 있는 확률로 도망 성공 여부를 판단합니다.
+
+도망에 성공하면 스테이지를 넘어가게 되고, 도망으로 스테이지를 넘어가게 되면 피 회복을 받지 못합니다.
+
+<img src="https://github.com/user-attachments/assets/4b805de7-2121-4e9f-8f80-81d7b8d63bf6"/>
+
+### 3. 스테이지 진행에 비례하여 스탯 증가
+
+3-1. 체력
+
+플레이어의 경우 몬스터 처치로 스테이지 클리어 시, 체력이 일정량 회복이 됩니다.
+
+<img src="https://github.com/user-attachments/assets/edb75ee1-7c51-480f-a390-a8eb843279ff"/>
+
+몬스터의 경우 스테이지에 비례하여 추가 체력을 얻은 상태로 조우하게 됩니다. (하단 전체사진 참고)
+
+3-2. 데미지
+
+플레이어와 몬스터 모두 스테이지에 비례하여 minDamage, maxDamage가 상승합니다.
+
+<img src="https://github.com/user-attachments/assets/e58bb473-0db5-4c44-85c6-04835772ac40" style="width:300px"/>
+<img src="https://github.com/user-attachments/assets/ae275f9d-f0ce-41b8-975b-4626d23787fb" style="width:300px"/>
+
+### 4. 게임 승리 및 게임 패배
+
+4-1. 게임 승리
+
+스테이지가 총 스테이지를 넘어서는 경우 게임을 즉시 종료하고 게임 승리를 띄웁니다.
+
+<img src="https://github.com/user-attachments/assets/d76f98b9-78f9-4be4-956d-dfa47649c99c"/>
+
+4-2. 게임 패배
+
+플레이어의 체력이 0 이하가 되는 경우 게임을 즉시 종료하고 게임 패배를 띄웁니다.
+
+게임 패배하면 다시 메인메뉴로 이동하도록 구현되었습니다.
+
+<img src="https://github.com/user-attachments/assets/9a2e8ab8-3fdc-4cb7-afbe-69dc90e08337"/>
